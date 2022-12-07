@@ -1,0 +1,42 @@
+.header{
+    background-color: black;
+}
+
+.navbar{
+    background-color: black;
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-size: 20px;
+}
+
+.link{
+    text-decoration: none;
+    color: black;
+}
+
+.navbar .link{
+    color: white;
+    margin-right: 20px;
+}
+
+.title{
+    margin: 2rem 0;
+}
+
+table{
+    border: 1px solid black;
+}
+thead th{
+    font-size: larger;
+    margin-bottom: 30px;
+}
+
+.details-table{
+    font-size: 20px;
+}
+
+.add-person select, input, .multiSelectContainer{
+    width: 300px !important;
+    margin-bottom: 1rem;
+}
