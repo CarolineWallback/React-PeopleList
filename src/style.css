@@ -40,3 +40,11 @@ thead th{
     width: 300px !important;
     margin-bottom: 1rem;
 }
+
+select{
+    color: grey;
+}
+
+.italic{
+    font-style: italic;
+}

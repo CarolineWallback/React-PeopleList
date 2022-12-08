@@ -1,23 +1,36 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import React from "react";
 import Multiselect from "multiselect-react-dropdown"
-import { useNavigate } from "react-router-dom";
+import ReactFormInputValidation from "react-form-input-validation";
+import { redirect } from "react-router-dom";
 
 export class CreatePerson extends React.Component{
+    constructor(props) {
+        super(props);
+    this.state = {
+        fields: {
+            name: "",
+            number: "",
+        },
 
-    state = {
-        name: "",
-        number: "",
         city: "",
         country: "",
         languages: [],
-
+            
         allCountries: [],
         allCities: [],
-        allLanguages: []
-    } 
+        allLanguages: [],
 
-    componentDidMount(){
+        errors: {},
+    };
+
+    this.form = new ReactFormInputValidation(this);
+    this.form.useRules({
+        name: 'required',
+        number: 'required|numeric'
+    })
+    
+    this.componentDidMount = () => {
         axios.get("https://localhost:7148/api/react/countries")
         .then (response => this.setState({allCountries: response.data})) 
 
@@ -25,115 +38,83 @@ export class CreatePerson extends React.Component{
         .then (response => this.setState({allLanguages: response.data}))
     }
 
-    
-
-
-    handleSubmit = () => {
-        //event.preventDefault();
+    this.form.onformsubmit = () => {
         var languageList = [];
         this.state.languages.map ((language) => {
             language.map((id) => {
                 if(!languageList.includes(id.languageId))
                 languageList.push(id.languageId)
-            })  
-             
+            })    
         })
         
         const person = {
-            name : this.state.name,
-            number: this.state.number,
+            name : this.state.fields.name,
+            number: this.state.fields.number,
             city: this.state.city,
             country: this.state.country,
             languages: languageList
         }
 
-        this.CreateNewPerson(person);
-    }
-
-    async CreateNewPerson (person) {
-        console.log(JSON.stringify(person))
-        
-
         fetch('https://localhost:7148/api/react/create/', {
         method: 'POST', 
         headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(person),
-        
-        })
-
-        // await axios.post(`https://localhost:7148/api/react/${person}`)
-        // .then (response => console.log(response)) 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(person),
+            })
+        .then (response => response.status)
+        .then(response => response == 201 ? alert ("Success!") : alert ("Failure. Try again later!"))
     }
-
-    setCountry(e){
+                          
+    this.setCountry = (e) => {
         this.setState({country : e.target.value})
+        
     }
 
-    fetchCities(e){
+    this.fetchCities = (e) =>{
         axios.get("https://localhost:7148/api/react/cities/" + e)
         .then(response => this.setState({allCities: response.data}))
     }
 
-    
-    onSelect(selectedItem){
-        const language = selectedItem.languageName
-        console.log(language)
-        this.state.languages.push(language)
-
     }
-    
-
-    
-    render(){
-        
-        while(this.state.allCountries == null)
-        {
-            return(<div>
-                {console.log("no countries")}
-            </div>)
-        }
-                
+    render(){  
         return(
-            
         <div className="container add-person mt-5">
-        <form onSubmit={this.handleSubmit}>
-                <input type="text" name="name" placeholder="Name *" onChange={(e => this.setState({name : e.target.value}))} /> <br />
-                <input type="text" name="number" placeholder="Phone Number *" onChange={(e => this.setState({number : e.target.value}))} /> <br />
+        <form onSubmit={this.form.handleSubmit}>
+            <input type="text" name="name" placeholder="Name" value={this.state.fields.name} onChange={this.form.handleChangeEvent} />
+                <label className="error">
+                    {this.state.errors.name ? this.state.errors.name : ""}
+                </label> <br />
+            <input type="tel" name="number" placeholder="Phone Number" value={this.state.fields.number} onChange={this.form.handleChangeEvent} data-attribute-name="phone number" /> 
+                <label className="error">
+                    {this.state.errors.number ? this.state.errors.number : ""}
+                </label> <br />
                 
-                <select name="country" defaultValue={"default"} onChange={e => { this.setCountry(e); this.fetchCities(e.target.value) }}>
-                    <option disabled value="default">Select Country *</option>
-                    {this.state.allCountries.map ((country) => {
-                        return <option key={country.countryId} value={country.countryId}>{country.countryName}</option>     
-                    })} 
-                </select>
-                <br />
-                <select name="city" defaultValue={"default"} onChange={(e => this.setState({city : e.target.value}))}>
-                    <option disabled value="default">Select City *</option>
-                    {this.state.allCities.map ((city) => {
-                        return <option key={city.cityId} value={city.cityId}>{city.cityName}</option>     
-                    })} 
-                </select>
-                
-                <br />
-                {/* <select multiple={true} name="languages" placeholder="Languages" onChange={(e => this.setState({languages : e.target.value}))}>
-                    <option disabled value="default">Select Languages *</option>
-                    {this.state.allLanguages.map ((language) => {
-                        return <option key={language.languageId} value={language.languageId}>{language.languageName}</option>     
-                    })} 
-                </select>  */}
-
-                <Multiselect class="multiselect"options={this.state.allLanguages}
+            <select name="country" defaultValue={"default"} required={false} onChange={e => { this.setCountry(e); this.fetchCities(e.target.value) }}>
+                <option disabled value="default">Select Country</option>
+                {this.state.allCountries.map ((country) => {
+                    return <option key={country.countryId} value={country.countryId}>{country.countryName}</option>     
+                })} 
+            </select>
+            <br />
+            <select name="city" defaultValue={"default"} required={false} onChange={(e => this.setState({city : e.target.value}))}>
+                <option disabled value="default">Select City</option>
+                {(this.state.country === "") ? <option className="italic" disabled value="default">Select Country First</option> : <></>}
+                {this.state.allCities.map ((city) => {
+                    return <option key={city.cityId} value={city.cityId}>{city.cityName}</option>     
+                })} 
+            </select>
+            <br />
+            <Multiselect name="languages" class="multiselect" options={this.state.allLanguages} required={true}
                 onSelect={e => this.state.languages.push(e)}
-                dataKey="languageId"
                 placeholder="Select Languages"
                 onRemove={e => this.state.languages.pop(e)}
-                displayValue="languageName"/>
-                
-                <br />
-                <button type="submit">Add</button>
-            </form>
+                displayValue="languageName"
+                />
+            <br />
+            
+            <button type="submit" className="btn btn-outline-dark">Submit</button>
+        </form>
         </div>
     )
     
