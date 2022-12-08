@@ -55,7 +55,7 @@ export function PersonDetails (){
                 <tr>
                     <th>Languages</th>
                     <td>
-                        {details.languages.map((language) => (
+                        {details.languages.map((language) => (  
                             <p>{language}</p>
                         ))}
                     </td>
