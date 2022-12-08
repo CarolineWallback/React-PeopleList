@@ -39,31 +39,35 @@ export class CreatePerson extends React.Component{
     }
 
     this.form.onformsubmit = () => {
-        var languageList = [];
-        this.state.languages.map ((language) => {
-            language.map((id) => {
-                if(!languageList.includes(id.languageId))
-                languageList.push(id.languageId)
-            })    
-        })
-        
-        const person = {
-            name : this.state.fields.name,
-            number: this.state.fields.number,
-            city: this.state.city,
-            country: this.state.country,
-            languages: languageList
-        }
+        if(!this.state.errors)
+        {
 
-        fetch('https://localhost:7148/api/react/create/', {
-        method: 'POST', 
-        headers: {
+            var languageList = [];
+            this.state.languages.map ((language) => {
+                language.map((id) => {
+                    if(!languageList.includes(id.languageId))
+                    languageList.push(id.languageId)
+                })    
+            })
+            
+            const person = {
+                name : this.state.fields.name,
+                number: this.state.fields.number,
+                city: this.state.city,
+                country: this.state.country,
+                languages: languageList
+            }
+            
+            fetch('https://localhost:7148/api/react/create/', {
+                method: 'POST', 
+                headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(person),
             })
-        .then (response => response.status)
-        .then(response => response == 201 ? alert ("Success!") : alert ("Failure. Try again later!"))
+            .then (response => response.status)
+            .then(response => response == 201 ? alert ("Success!") : alert ("Failure. Try again later!"))
+        }
     }
                           
     this.setCountry = (e) => {
