@@ -22,6 +22,7 @@ export class CreatePerson extends React.Component{
         allLanguages: [],
 
         errors: {},
+
     };
 
     this.form = new ReactFormInputValidation(this);
@@ -39,7 +40,8 @@ export class CreatePerson extends React.Component{
     }
 
     this.form.onformsubmit = () => {
-        if(!this.state.errors)
+        console.log(this.state.errors.name)
+        if(!this.state.errors.name && !this.state.errors.number)
         {
 
             var languageList = [];
