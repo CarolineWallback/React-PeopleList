@@ -2,7 +2,6 @@ import axios from "axios";
 import React from "react";
 import Multiselect from "multiselect-react-dropdown"
 import ReactFormInputValidation from "react-form-input-validation";
-import { PersonDetails } from "./PersonDetails";
 import { Navigate } from "react-router-dom";
 
 export class CreatePerson extends React.Component{
@@ -87,7 +86,6 @@ export class CreatePerson extends React.Component{
 
     }
     render(){  
-
         const {personCreated} = this.state;
 
         if(personCreated){
@@ -107,14 +105,14 @@ export class CreatePerson extends React.Component{
                     {this.state.errors.number ? this.state.errors.number : ""}
                 </label> <br />
                 
-            <select name="country" defaultValue={"default"} required={false} onChange={e => { this.setCountry(e); this.fetchCities(e.target.value) }}>
+            <select name="country" defaultValue={"default"} onChange={e => { this.setCountry(e); this.fetchCities(e.target.value) }}>
                 <option disabled value="default">Select Country</option>
                 {this.state.allCountries.map ((country) => {
                     return <option key={country.countryId} value={country.countryId}>{country.countryName}</option>     
                 })} 
             </select>
             <br />
-            <select name="city" defaultValue={"default"} required={false} onChange={(e => this.setState({city : e.target.value}))}>
+            <select name="city" defaultValue={"default"} onChange={(e => this.setState({city : e.target.value}))}>
                 <option disabled value="default">Select City</option>
                 {(this.state.country === "") ? <option className="italic" disabled value="default">Select Country First</option> : <></>}
                 {this.state.allCities.map ((city) => {
@@ -122,7 +120,7 @@ export class CreatePerson extends React.Component{
                 })} 
             </select>
             <br />
-            <Multiselect name="languages" class="multiselect" options={this.state.allLanguages} required={true}
+            <Multiselect name="languages" class="multiselect" options={this.state.allLanguages}
                 onSelect={e => this.state.languages.push(e)}
                 placeholder="Select Languages"
                 onRemove={e => this.state.languages.pop(e)}
