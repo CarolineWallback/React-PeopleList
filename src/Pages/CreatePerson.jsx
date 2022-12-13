@@ -25,7 +25,6 @@ export class CreatePerson extends React.Component{
         errors: {},
 
         personCreated : false
-
     };
 
     this.form = new ReactFormInputValidation(this);
@@ -74,7 +73,6 @@ export class CreatePerson extends React.Component{
             .then(this.state.personCreated = true)
             .then(this.forceUpdate())
 
-    
         }
     }
                           
@@ -92,14 +90,11 @@ export class CreatePerson extends React.Component{
 
         const {personCreated} = this.state;
 
-        if(personCreated === true){
+        if(personCreated){
             return(
                 <Navigate to ='/People'/>
             )
-        }
-        else{
-
-        
+        }  
         return(
         <div className="container add-person mt-5">
         <form onSubmit={this.form.handleSubmit}>
@@ -142,4 +137,4 @@ export class CreatePerson extends React.Component{
 }
     
 }
-}
+
