@@ -1,8 +1,9 @@
-import axios, { HttpStatusCode } from "axios";
+import axios from "axios";
 import React from "react";
 import Multiselect from "multiselect-react-dropdown"
 import ReactFormInputValidation from "react-form-input-validation";
-import { redirect } from "react-router-dom";
+import { PersonDetails } from "./PersonDetails";
+import { Navigate } from "react-router-dom";
 
 export class CreatePerson extends React.Component{
     constructor(props) {
@@ -23,6 +24,8 @@ export class CreatePerson extends React.Component{
 
         errors: {},
 
+        personCreated : false
+
     };
 
     this.form = new ReactFormInputValidation(this);
@@ -40,10 +43,9 @@ export class CreatePerson extends React.Component{
     }
 
     this.form.onformsubmit = () => {
-        console.log(this.state.errors.name)
+
         if(!this.state.errors.name && !this.state.errors.number)
         {
-
             var languageList = [];
             this.state.languages.map ((language) => {
                 language.map((id) => {
@@ -68,13 +70,16 @@ export class CreatePerson extends React.Component{
                 body: JSON.stringify(person),
             })
             .then (response => response.status)
-            .then(response => response == 201 ? alert ("Success!") : alert ("Failure. Try again later!"))
+            .then(response => response === 201 ? <></> : alert ("Failure. Try again later!"))
+            .then(this.state.personCreated = true)
+            .then(this.forceUpdate())
+
+    
         }
     }
                           
     this.setCountry = (e) => {
         this.setState({country : e.target.value})
-        
     }
 
     this.fetchCities = (e) =>{
@@ -84,6 +89,17 @@ export class CreatePerson extends React.Component{
 
     }
     render(){  
+
+        const {personCreated} = this.state;
+
+        if(personCreated === true){
+            return(
+                <Navigate to ='/People'/>
+            )
+        }
+        else{
+
+        
         return(
         <div className="container add-person mt-5">
         <form onSubmit={this.form.handleSubmit}>
@@ -123,6 +139,7 @@ export class CreatePerson extends React.Component{
         </form>
         </div>
     )
+}
     
 }
 }
