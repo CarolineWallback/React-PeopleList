@@ -2,6 +2,7 @@ import { useLocation, useNavigate} from "react-router-dom";
 import { Table } from "react-bootstrap";
 import axios from "axios";
 import {useState, useEffect } from "react";
+import { EditPerson } from "../components/EditPerson";
 
 export function PersonDetails (){
 
@@ -11,6 +12,7 @@ export function PersonDetails (){
     const navigate = useNavigate();
 
     const [details, setDetails] = useState();
+    const [editPerson, setEditPerson] = useState(false);
 
     useEffect(() => {
         axios.get("https://localhost:7148/api/react/" + id)
@@ -63,9 +65,12 @@ export function PersonDetails (){
             </tbody>
         </Table>
 
+        <button className="btn btn-outline-dark" onClick={() => setEditPerson(true)} >Edit Person</button>                    
+        <button className="btn btn-outline-dark m-1" onClick={() => DeletePerson()} >Delete Person</button>
 
-        <button className="btn btn-outline-dark" onClick={() => DeletePerson()} >Delete Person</button>
+        {editPerson === true ? <EditPerson person={person} details={details}/> : <></>}
 
         </div>
     )
+    
 }
