@@ -131,7 +131,6 @@ export function EditPerson(props){
                 displayValue="languageName"
                 /> 
             </div>
-
             
             <button type="submit" className="btn btn-outline-dark btn-sm" onClick={() => UpdatePerson()}>Update</button>
         </form>
