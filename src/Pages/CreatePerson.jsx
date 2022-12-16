@@ -56,7 +56,7 @@ export class CreatePerson extends React.Component{
                 name : this.state.fields.name,
                 number: this.state.fields.number,
                 cityId: this.state.cityId,
-                languages: languageList
+                languageIds: languageList
             }
             
             fetch('https://localhost:7148/api/react/create/', {

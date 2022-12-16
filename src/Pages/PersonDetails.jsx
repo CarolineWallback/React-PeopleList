@@ -36,7 +36,6 @@ export function PersonDetails (){
     }
     return(
         <div className="container m-5">
-            {console.log(details)}
         <Table bordered className="details-table">
             <tbody>
                 <tr>
