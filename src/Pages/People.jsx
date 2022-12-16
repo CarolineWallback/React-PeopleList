@@ -8,6 +8,7 @@ export function People () {
 
     const [people, setPeople] = useState([]);
     const [sortState, setSortState] = useState("none");
+
     const sortMethods = {
     none: { method: (a, b) => null },
     descending: { method: (a, b) => a.name.localeCompare(b.name) },
@@ -16,7 +17,8 @@ export function People () {
     useEffect(() => {
         axios.get("https://localhost:7148/api/react")
         .then(response => setPeople(response.data))
-    }, []);
+        
+    }, [people]);
     
     if(people.length === 0)
     {

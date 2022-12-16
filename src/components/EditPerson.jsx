@@ -1,6 +1,7 @@
 import Multiselect from "multiselect-react-dropdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 export function EditPerson(props){
@@ -13,21 +14,23 @@ export function EditPerson(props){
         city: props.details.city,
         countryId: props.details.countryId,
         country: props.details.country,
-        languages: props.details.languages
+        languages: props.details.languages,
+        languageIds: props.details.languageIds,
+        languageModels: props.details.languageModels
     })
 
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [allLanguages, setAllLanguages] = useState([]);
 
-    useEffect(() => {
-       
+    const navigate = useNavigate();
+
+    useEffect(() => {    
         fetchCountries();
         fetchCities(person.countryId);
         fetchLanguages();
-        console.log(person);
 
-    }, []);
+    }, [person.countryId]);
 
     async function fetchCountries(){
         await axios.get("https://localhost:7148/api/react/countries")
@@ -46,59 +49,91 @@ export function EditPerson(props){
      
     const handleChange =(e)=>{
         setPerson({...person, [e.target.name]: e.target.value});
-
-        if(e.target.name === "countryId")
-        {
-            fetchCities(e.target.value);
-        }
-         
+        console.log(person)   
     };
 
     const handleSubmit =(e)=>{
         e.preventDefault();
+        setPerson({
+            id: person.id,
+            name: person.name,
+            number: person.number,
+            cityId: person.cityId,
+            countryId: person.countryId,
+            languageModels: person.languageModels,
+        });
 
+        console.log(person)
     };
 
-    async function EditPerson(){
-        await axios.put('https://localhost:7148/api/React/' + person)
-        .then(response => response.data)
+    async function UpdatePerson(){
+        await axios.put('https://localhost:7148/api/React/' , person)
+        .then(response => response.status)
+
+        navigate("/People/")
          
+    }
+
+    const onSelect = (selectedList, selectedItem) => {
+        person.languageModels.push(selectedItem)
+    }
+    
+    const onRemove = (selectedList, removedItem) => {
+       person.languageModels.pop(removedItem)
     }
 
     return(
         
         <div className="container add-person mt-5">
         <form onSubmit={handleSubmit}>
-
-            <input type="text" name="name" onChange={handleChange} value={person.name}></input><br />
-
-            <input type="text" name="number" onChange={handleChange} value={person.number}></input><br />
-
-                
-            <select name="countryId" onChange={handleChange}>
+            <div className="form-group">
+            <label>{person.name}</label>
+            <input type="text" name="name" placeholder={person.name} onChange={handleChange}></input>
+            </div>
+            <div className="form-group">
+            <label>{person.number}</label>
+            <input type="text" name="number" placeholder={person.number} onChange={handleChange}></input>
+            </div>
+            <div className="form-group">
+            <label>{person.country}</label>
+            <select name="countryId" defaultValue="default" onChange={handleChange}>
+                <option value="default">{person.country}</option>
                 {countries.map ((country) => {
-                    return (
-                    <option key={country.countryId} value={country.countryId}>{country.countryName}</option>  )   
+                    if(country.countryId !== person.countryId)
+                    {
+                        return (
+                            <option key={country.countryId} value={country.countryId}>{country.countryName}</option>  )
+                    }     
                 })} 
             </select>
-            <br />
-
-            <select name="cityId" onChange={handleChange}>
+            </div>
+            <div className="form-group">
+            <label>{person.city}</label>
+            <select name="cityId" defaultValue={"default"} onChange={handleChange}>
+                <option value="default">{person.city}</option>
                 {cities.map ((city) => {
+                if(city.cityId !== person.cityId)
+                {
                     return <option key={city.cityId} value={city.cityId}>{city.cityName}</option>     
-                })} 
+                    } 
+                })}
+                    
             </select>
-            <br />
+            </div>
 
-            {/* <Multiselect name="languages" class="multiselect" options={allLanguages}
-                onSelect={e => setPerson.languages.}
-                placeholder="Select Languages"
-                onRemove={e => setPerson.languages.pop(e)}
+            <div className="form-group">
+            <label>Languages:</label>
+            <Multiselect name="languages" class="multiselect" 
+                options={allLanguages}  
+                selectedValues={person.languageModels} 
+                onSelect={onSelect}
+                onRemove={onRemove}
                 displayValue="languageName"
                 /> 
-            <br />  */}
+            </div>
+
             
-            <button type="submit" className="btn btn-outline-dark btn-sm">Update</button>
+            <button type="submit" className="btn btn-outline-dark btn-sm" onClick={() => UpdatePerson()}>Update</button>
         </form>
         </div>
     )

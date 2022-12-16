@@ -13,8 +13,8 @@ export class CreatePerson extends React.Component{
             number: "",
         },
 
-        city: "",
-        country: "",
+        cityId: "",
+        countryId: "",
         languages: [],
             
         allCountries: [],
@@ -55,8 +55,7 @@ export class CreatePerson extends React.Component{
             const person = {
                 name : this.state.fields.name,
                 number: this.state.fields.number,
-                city: this.state.city,
-                country: this.state.country,
+                cityId: this.state.cityId,
                 languages: languageList
             }
             
@@ -68,15 +67,14 @@ export class CreatePerson extends React.Component{
                 body: JSON.stringify(person),
             })
             .then (response => response.status)
-            .then(response => response === 201 ? <></> : alert ("Failure. Try again later!"))
-            .then(this.state.personCreated = true)
+            .then(response => response === 201 ? this.setState({personCreated : true}) : alert ("Failure. Try again later!"))
             .then(this.forceUpdate())
 
         }
     }
                           
     this.setCountry = (e) => {
-        this.setState({country : e.target.value})
+        this.setState({countryId : e.target.value})
     }
 
     this.fetchCities = (e) =>{
@@ -112,7 +110,7 @@ export class CreatePerson extends React.Component{
                 })} 
             </select>
             <br />
-            <select name="city" defaultValue={"default"} onChange={(e => this.setState({city : e.target.value}))}>
+            <select name="city" defaultValue={"default"} onChange={(e => this.setState({cityId : e.target.value}))}>
                 <option disabled value="default">Select City</option>
                 {(this.state.country === "") ? <option className="italic" disabled value="default">Select Country First</option> : <></>}
                 {this.state.allCities.map ((city) => {

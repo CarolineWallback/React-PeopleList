@@ -13,7 +13,7 @@ export function Person (props) {
                 <p>{person.phoneNumber}</p>
             </td>
             <td>
-                <Link to={person.id} state={{ person: person }}>
+                <Link to={person.id} key={person.id} state={{ person: person }}>
                     <button className="btn btn-outline-dark" >View Details</button>
                 </Link>
             </td>

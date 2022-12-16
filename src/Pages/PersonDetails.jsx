@@ -9,6 +9,7 @@ export function PersonDetails (){
     const location = useLocation();
     const person = location.state?.person;
     const id = person.id;
+   
     const navigate = useNavigate();
 
     const [details, setDetails] = useState();
@@ -17,14 +18,14 @@ export function PersonDetails (){
     useEffect(() => {
         axios.get("https://localhost:7148/api/react/" + id)
         .then(response => setDetails(response.data))
-      
-    },[id]);
+
+        
+    },[]);
     
     async function DeletePerson(){
         await axios.delete('https://localhost:7148/api/React/' + id)
-        .then(response => response.data)
+        .then(response => response.status === 202 ? navigate("/People") : "")
         
-        navigate("/People");
     }
 
     while(details == null)
@@ -35,6 +36,7 @@ export function PersonDetails (){
     }
     return(
         <div className="container m-5">
+            {console.log(details)}
         <Table bordered className="details-table">
             <tbody>
                 <tr>
